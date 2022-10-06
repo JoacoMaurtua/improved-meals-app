@@ -35,8 +35,7 @@ const MealDetailsScreen = ({ route, navigation }) => {
     }
   }
 
-  console.log(favoriteMealCtx.ids)
-
+  
   //crear un elemento con interaccion en la cabecera
   useLayoutEffect(() => {
     navigation.setOptions({
