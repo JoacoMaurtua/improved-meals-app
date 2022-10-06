@@ -7,8 +7,8 @@ import FavoritiesScreen from './screens/FavoritiesScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import {Ionicons} from '@expo/vector-icons';
-
+import { Ionicons } from '@expo/vector-icons';
+import FavoritiesContextProvider from './store/context/favoritiesContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +25,7 @@ function DrawerNavigator() {
         drawerInactiveTintColor: 'white',
         drawerActiveTintColor: 'white',
         drawerActiveBackgroundColor: '#e66331',
+        sceneContainerStyle: { backgroundColor: '#f8f8ff' }, //color de fondo
       }}
     >
       <Drawer.Screen
@@ -32,16 +33,20 @@ function DrawerNavigator() {
         component={CategoriesScreen}
         options={{
           title: 'All Categories',
-          drawerIcon: ({color,size}) => (
-            <Ionicons name="list" color={color} size={size}/>
-          )
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="list" color={color} size={size} />
+          ),
         }}
       />
-      <Drawer.Screen name="Favorities" component={FavoritiesScreen} options={{
-         drawerIcon: ({color,size}) => (
-          <Ionicons name="star" color={color} size={size}/>
-        )
-      }}/>
+      <Drawer.Screen
+        name="Favorities"
+        component={FavoritiesScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="star" color={color} size={size} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -50,40 +55,42 @@ export default function App() {
   return (
     <>
       <StatusBar animated={true} backgroundColor="#f5a442" style="light" />
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: '#f5a442' },
-            headerTintColor: 'white',
-            contentStyle: { backgroundColor: '#f8f8ff' },
-            headerTitleAlign: 'center',
-          }}
-        >
-          <Stack.Screen
-            name="Drawer"
-            options={{
-              headerShown: false, //Ocultar el titulo del stack navigator
+      <FavoritiesContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: '#f5a442' },
+              headerTintColor: 'white',
+              contentStyle: { backgroundColor: '#f8f8ff' },
+              headerTitleAlign: 'center',
             }}
-            component={DrawerNavigator}
-          />
+          >
+            <Stack.Screen
+              name="Drawer"
+              options={{
+                headerShown: false, //Ocultar el titulo del stack navigator
+              }}
+              component={DrawerNavigator}
+            />
 
-          <Stack.Screen
-            name="MealsOverview"
-            options={{ title: 'Meals Overview' }}
-            component={MealsOverviewScreen}
-          />
-          <Stack.Screen
-            name="MealDetails"
-            component={MealDetailsScreen}
-            options={{
-              title: 'Meal Details',
-              /*  headerRight: ()=>{          //Ejemplo de elemento de cabecera sin interaccion
+            <Stack.Screen
+              name="MealsOverview"
+              options={{ title: 'Meals Overview' }}
+              component={MealsOverviewScreen}
+            />
+            <Stack.Screen
+              name="MealDetails"
+              component={MealDetailsScreen}
+              options={{
+                title: 'Meal Details',
+                /*  headerRight: ()=>{          //Ejemplo de elemento de cabecera sin interaccion
                 return <Text>Arriba</Text>
               } */
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </FavoritiesContextProvider>
     </>
   );
 }
@@ -106,7 +113,6 @@ const styles = StyleSheet.create({});
    o headerRight, ambas reciben un componente funcional como valor, ahora, si se desea
    agregar un componente que interactue, como un boton, el componente debe definirse aparte*/
 
-
-   /* Preparar un proyecto para usar correctamente todos los Navigators:
+/* Preparar un proyecto para usar correctamente todos los Navigators:
       https://www.youtube.com/watch?v=f_n5br5eZ3o
    */

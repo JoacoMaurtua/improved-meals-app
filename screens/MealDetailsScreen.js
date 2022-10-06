@@ -1,35 +1,58 @@
-import { useEffect, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Button } from 'react-native';
+import { useContext, useLayoutEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Button,
+} from 'react-native';
 import MealDetails from '../components/MealDetails';
 import { MEALS } from '../data/dummy-data';
 import Subtitle from '../components/Subtitle';
 import IconButton from '../components/IconButton';
 import List from '../components/List';
+import { FavoritiesContext } from '../store/context/favoritiesContext';
 
 const MealDetailsScreen = ({ route, navigation }) => {
-  const id = route.params.id;
+  const mealId = route.params.id;
 
-  const selectedMeal = MEALS.find((meal) => meal.id === id);
+  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
-  //Generar titulos dinamicamente
-/*   useEffect(() => {
-    navigation.setOptions({
-      title: selectedMeal.title,
-    });
-  }, [navigation, id]); */
+  //extraigo los datos del contexto
+  const favoriteMealCtx = useContext(FavoritiesContext);
 
-  function headerButtonPressHandler(){
-    console.log('Pressed!');
+  //varibale para saber si ya esta dentro de favoritos
+  const mealIsFavorite = favoriteMealCtx.ids.includes(mealId);
+
+  console.log(favoriteMealCtx);
+
+  function changeStatusFavoriteHandler() {
+    if (mealIsFavorite) {
+      favoriteMealCtx.removeFavorite(mealId);
+    } else {
+      favoriteMealCtx.addFavorite(mealId);
+    }
   }
 
-  //crear un elemento con interacicon en la cabecera
-  useLayoutEffect(()=>{
+  console.log(favoriteMealCtx.ids)
+
+  //crear un elemento con interaccion en la cabecera
+  useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight:()=>{
-        return <IconButton  onPress={headerButtonPressHandler}/>
-      }
+      headerRight: () => {
+        return (
+          <IconButton
+            icon={mealIsFavorite ? 'star' : 'star-outline'}
+            onPress={changeStatusFavoriteHandler}
+            color="white"
+          />
+        );
+      },
     });
-  },[navigation,headerButtonPressHandler])
+  }, [navigation, changeStatusFavoriteHandler]);
+
+  console.log(mealIsFavorite);
 
   return (
     <ScrollView style={styles.rootContainer}>
@@ -57,7 +80,7 @@ const MealDetailsScreen = ({ route, navigation }) => {
 export default MealDetailsScreen;
 
 const styles = StyleSheet.create({
-  rootContainer:{
+  rootContainer: {
     marginBottom: 20,
   },
 
@@ -73,11 +96,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  listContainer:{
+  listContainer: {
     width: '80%',
   },
 
-  listOuterContainer:{
+  listOuterContainer: {
     alignItems: 'center',
   },
 });
